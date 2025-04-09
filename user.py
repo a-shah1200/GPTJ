@@ -22,8 +22,10 @@ class User():
         self.data["api_key"][self.api]=int(count)
         self.data["first_name"][int(count)]=first
         self.data["last_name"][int(count)]=last
+        self.data["generate_r"][int(count)]=0
         with open("data/database.json", 'w') as f:
             json.dump(self.data,f)
+    
             
     def get_data(self):
         if self.check():
@@ -33,9 +35,26 @@ class User():
             except:
                 i_d=int(self.data["api_key"][self.api])
                 return self.data["first_name"][i_d],self.data["last_name"][i_d]
+            
                 
         else:
             raise Exception("Something Has Gone Wrong, User Should be registered")
+    
+    def is_gen_r(self,check=1,val=0):
+        i_d=self.data["api_key"][self.api]
+        if check:
+            try:
+                return self.data["generate_r"][str(i_d)]
+            except:
+                return self.data["generate_r"][int(i_d)]
+        else:
+            self.data["generate_r"][str(i_d)]=val
+            with open("data/database.json", 'w') as f:
+                json.dump(self.data,f)
+            
+            
+            
+        
             
         
         

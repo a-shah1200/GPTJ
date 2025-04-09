@@ -5,6 +5,11 @@ import streamlit as st
 import user
 import os
 import ai_package as ap
+
+try:
+    del st.session_state.check_1
+except:
+    pass
 dic_temp={}
 for i in st.session_state:
     dic_temp[i]=st.session_state[i]
@@ -15,18 +20,12 @@ if "first" not in st.session_state:
 if "last" not in st.session_state:
     st.session_state["last"]=last
 
-st.write(st.session_state)
 string="Welcome, "+str(st.session_state["first"]+" "+ str(st.session_state["last"]))
 st.markdown(string)
 
-st.write("Go to the Nav bar and explore the options")
+st.info("Go to the Nav bar and explore the options")
 
 
-"""if len(os.listdir("data/Progress"))==0:
-
-else:
-    # Display the progress"""
-    
 
 
 # Custom CSS for positioning the container box
@@ -50,17 +49,29 @@ st.markdown("""
     </style>
 """, unsafe_allow_html=True)
 
-#prompt=""" """
-#query="""Analyze the given resume provided in pdf file. Then based upon that give a short professional summary for the user
-#Remember on following things: 
- #   1) Focus on strengths
-  #  2) Use professional and formal language
-   # 3) Maximum of 500 charaters"""
-#files=["data/resume.pdf"]
-#agent=ap.Agent(dic_temp["api_key"],"Professional Summary",prompt)
-#messages=agent.search_files(query, files,new=True)
-# Text inside the container
-st.markdown('<div class="container">This is the text inside the container box!This is the text inside the container boxThis is the text inside the container boxThis is the text inside the container boxThis is the text inside the container boxThis is the text inside the container boxThis is the text inside the container boxThis is the text inside the container box</div>', unsafe_allow_html=True)
+if int(obj.is_gen_r(check=1))==0:
+    prompt="""Please read the resume and give a professional summary"""
+    query="""Analyze the given resume provided in pdf file. Then based upon that give a short professional summary for the user
+     Remember following things: 
+         1) Focus on strengths
+         2) Use professional and formal language
+         3) Maximum of 500 charaters
+         4) No need to include references for examples, things like this 【4:0†source】"""
+    files=["data/resume.pdf"]
+    agent=ap.Agent(dic_temp["api_key"],"Professional Summary",prompt)
+    message=agent.search_files(query, files,New=True)
+    m_text=message[-1].content[-1].text.value
+    obj.is_gen_r(check=0,val=1)
+    with open("data/gen_data/professional_summary.txt","w") as f:
+        f.write(m_text)
+else:
+    with open("data/gen_data/professional_summary.txt","r") as f:
+        m_text=f.read()
+
+
+st.info("Professional Summary")
+string='<div class="container">'+m_text+'</div>'
+st.markdown(string, unsafe_allow_html=True)
 
 
 

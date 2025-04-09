@@ -29,12 +29,12 @@ if st.session_state.check_1=="Continue":
     st.info("Press Continue to Proceed Forward")  
 if st.button(st.session_state.check_1):
     if st.session_state.check_1=="Continue":
+        obj=user.User(st.session_state["api_key"])
+        obj.add(first_name,last_name)
         st.session_state.user=1
     with st.spinner("Please wait"):
         check=make_copy(uploaded_pdf)
         if check and st.session_state["first"] and st.session_state["last"]:
-            obj=user.User(st.session_state["api_key"])
-            obj.add(first_name,last_name)
             st.session_state.check_1="Continue"
             st.rerun()
            
