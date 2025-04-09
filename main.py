@@ -7,6 +7,7 @@ if "user" not in st.session_state:
 if "api_key" not in st.session_state:
     st.session_state.api_key=None
 
+
 if st.session_state.user:
     if st.session_state.user==1:
         pg=st.navigation([st.Page("page3.py",title="Home Page"),st.Page("page4.py",title="Resume Analysis"),

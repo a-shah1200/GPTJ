@@ -27,12 +27,12 @@ class Agent():
     self.prompt = prompt
   def get_assitant(self):
     ai = Assistant(
-    name="self.name",
+    name=self.name,
     model="gpt-4o-mini",
-    instructions=self.prompt,tools=[FileSearch])
+    instructions=self.prompt)
     return ai
 
-  def search_files(self,query,files,New=False):
+  def search(self,query,New=False):
     if self.thread is None or New==True:
       try:
         self.thread.delete()
@@ -41,8 +41,7 @@ class Agent():
       self.thread = Thread()
     else:
       self.thread = Thread(id=self.thread.id)
-    #print(f"Files being searched: {[file.filename for file in files]}")
-    self.thread.add(query,file_search_files=files)
+    self.thread.add(query)
     assistant = self.get_assitant()
     runs = self.thread.run(assistant=assistant)
     messages = self.thread.get_messages()
@@ -54,9 +53,33 @@ class Agent():
       self.thread.delete()
     except:
       pass
-  
 
+    
+    
+class FileSearchAgent(Agent):
+    def get_assitant(self):
+      ai = Assistant(
+      name=self.name,
+      model="gpt-4o-mini",
+      instructions=self.prompt,tools=[FileSearch])
+      return ai
 
+    def search(self,query,files,New=False):
+      if self.thread is None or New==True:
+        try:
+          self.thread.delete()
+        except:
+          pass
+        self.thread = Thread()
+      else:
+        self.thread = Thread(id=self.thread.id)
+      self.thread.add(query,file_search_files=files)
+      assistant = self.get_assitant()
+      runs = self.thread.run(assistant=assistant)
+      messages = self.thread.get_messages()
+      self.meta = {"run": runs, "thread": self.thread} # Used for debugging only
+      return messages
+    
 
 
     

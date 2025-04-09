@@ -3,9 +3,9 @@
 
 import streamlit as st
 import user
-import os
+import utils
 import ai_package as ap
-
+import time
 try:
     del st.session_state.check_1
 except:
@@ -26,52 +26,66 @@ st.markdown(string)
 st.info("Go to the Nav bar and explore the options")
 
 
-
-
-# Custom CSS for positioning the container box
-st.markdown("""
-    <style>
-        .container {
-            position: fixed;
-            bottom: 100px;
-            left: 50%;
-            transform: translateX(-50%);
-            background-color: rgba(0, 0, 0, 0.7);
-            color: white;
-            padding: 20px;
-            border-radius: 20px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-            font-size: 18px;
-            max_width: 80%;
-            width: auto;
-            
-        }
-    </style>
-""", unsafe_allow_html=True)
-
 if int(obj.is_gen_r(check=1))==0:
-    prompt="""Please read the resume and give a professional summary"""
-    query="""Analyze the given resume provided in pdf file. Then based upon that give a short professional summary for the user
-     Remember following things: 
-         1) Focus on strengths
-         2) Use professional and formal language
-         3) Maximum of 500 charaters
-         4) No need to include references for examples, things like this 【4:0†source】"""
-    files=["data/resume.pdf"]
-    agent=ap.Agent(dic_temp["api_key"],"Professional Summary",prompt)
-    message=agent.search_files(query, files,New=True)
-    m_text=message[-1].content[-1].text.value
-    obj.is_gen_r(check=0,val=1)
-    with open("data/gen_data/professional_summary.txt","w") as f:
-        f.write(m_text)
+    with st.spinner("Loading, Please wait"):
+        prompt="""Please read the resume and give a professional summary"""
+        query="""Analyze the given resume provided in pdf file. Then based upon that give a short professional summary for the user
+         Remember following things: 
+             1) Focus on strengths
+             2) Use professional and formal language
+             3) Maximum of 500 charaters
+             4) No need to include references for examples, things like this 【4:0†source】"""
+        files=["data/resume.pdf"]
+        agent=ap.FileSearchAgent(dic_temp["api_key"],"Professional Summary",prompt)
+        message=agent.search(query, files,New=True)
+        m_text=message[-1].content[-1].text.value
+        obj.is_gen_r(check=0,val=1)
+        with open("data/gen_data/professional_summary.txt","w") as f:
+            f.write(m_text)
 else:
     with open("data/gen_data/professional_summary.txt","r") as f:
         m_text=f.read()
 
+with st.chat_message("assistant"):
+        st.info("Professional Summary")
+        st.session_state["api_key"]=dic_temp["api_key"]
+        st.write(m_text)
+       
+            
+            
+            
+with st.expander("Daily Motivation",expanded=True):
+    off = st.toggle("Off")
+    st.session_state["api_key"]=dic_temp["api_key"]
+    if off:
+        pass
+    else:
+        if int(obj.is_gen_q(check=1))==0:
+            with st.spinner("Loading, Please wait"):
+                agent_q=ap.Agent(dic_temp["api_key"], "quotes","Give a motivational quote" )
+                query="""You will give a motivational quote
+                 Remember following things: 
+                     1) Target audience is jobseekers
+                     2) Be kind and compassionate
+                     3) Dont make it too long
+                     4) Try to make quote appropriate for a variety of audience. As in it should be
+                        suitable for audience of diverse backgrounds and cultures"""
+                message_q=agent_q.search(query=query,New=True)
+                m_text_q=message_q[-1].content[-1].text.value
+                obj.is_gen_q(check=0,val=1)
+                with open("data/gen_data/quotes.txt","w") as f:
+                    f.write(m_text_q)
+        else:
+           with open("data/gen_data/quotes.txt","r") as f:
+               m_text_q=f.read()
+        st.write_stream(utils.streamify(m_text_q))
+        
+        if st.button("New Quote"):
+            st.session_state["api_key"]=dic_temp["api_key"]
+            obj.is_gen_q(check=0,val=0)
+            time.sleep(0.02)
+            st.rerun()
 
-st.info("Professional Summary")
-string='<div class="container">'+m_text+'</div>'
-st.markdown(string, unsafe_allow_html=True)
 
 
 
