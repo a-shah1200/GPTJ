@@ -8,14 +8,15 @@ import ai_package as ap
 dic_temp={}
 for i in st.session_state:
     dic_temp[i]=st.session_state[i]
-#obj=user.User(st.session_state.api_key)
+obj=user.User(st.session_state.api_key)
+first,last=obj.get_data()
 if "first" not in st.session_state:
-    st.session_state["first"]="H"
+    st.session_state["first"]=first
 if "last" not in st.session_state:
-    st.session_state["last"]='E'
+    st.session_state["last"]=last
 
 st.write(st.session_state)
-string="Welcome, "+str(st.session_state["first"]+ str(st.session_state["last"]))
+string="Welcome, "+str(st.session_state["first"]+" "+ str(st.session_state["last"]))
 st.markdown(string)
 
 st.write("Go to the Nav bar and explore the options")
@@ -49,15 +50,15 @@ st.markdown("""
     </style>
 """, unsafe_allow_html=True)
 
-prompt=""" """
-query="""Analyze the given resume provided in pdf file. Then based upon that give a short professional summary for the user
-Remeber on following things: 
-    1) Focus on strengths
-    2) Use professional and formal language
-    3) Maximum of 500 charaters"""
-files=["data/resume.pdf"]
-agent=ap.Agent(dic_temp["api_key"],"Professional Summary",prompt)
-messages=agent.search_files(query, files,new=True)
+#prompt=""" """
+#query="""Analyze the given resume provided in pdf file. Then based upon that give a short professional summary for the user
+#Remember on following things: 
+ #   1) Focus on strengths
+  #  2) Use professional and formal language
+   # 3) Maximum of 500 charaters"""
+#files=["data/resume.pdf"]
+#agent=ap.Agent(dic_temp["api_key"],"Professional Summary",prompt)
+#messages=agent.search_files(query, files,new=True)
 # Text inside the container
 st.markdown('<div class="container">This is the text inside the container box!This is the text inside the container boxThis is the text inside the container boxThis is the text inside the container boxThis is the text inside the container boxThis is the text inside the container boxThis is the text inside the container boxThis is the text inside the container box</div>', unsafe_allow_html=True)
 
