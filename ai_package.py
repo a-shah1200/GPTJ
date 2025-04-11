@@ -22,9 +22,14 @@ class Agent():
     self.client=OpenAI(api_key=_API_KEY)
     marvin.settings.openai.api_key = _API_KEY
     self.name=name
+    self.t_id=None
     #self.assistant= Assistant(name=name, model="gpt-4o-mini")
     self.thread=None
     self.prompt = prompt
+ 
+  def get_tid(self):
+      return self.t_id
+
   def get_assitant(self):
     ai = Assistant(
     name=self.name,
@@ -45,6 +50,7 @@ class Agent():
     assistant = self.get_assitant()
     runs = self.thread.run(assistant=assistant)
     messages = self.thread.get_messages()
+    self.t_id=self.thread.id
     self.meta = {"run": runs, "thread": self.thread} # Used for debugging only
     return messages
 
@@ -64,19 +70,24 @@ class FileSearchAgent(Agent):
       instructions=self.prompt,tools=[FileSearch])
       return ai
 
-    def search(self,query,files,New=False):
-      if self.thread is None or New==True:
-        try:
-          self.thread.delete()
-        except:
-          pass
-        self.thread = Thread()
+    def search(self,query,files,New=False,check=None):
+      if check==None:
+          if self.thread is None or New==True:
+            try:
+              self.thread.delete()
+            except:
+              pass
+            self.thread = Thread()
+          else:
+              self.thread = Thread(id=self.thread.id)
       else:
-        self.thread = Thread(id=self.thread.id)
+         self.thread=Thread(id=check)
+         print("We in check",check)
       self.thread.add(query,file_search_files=files)
       assistant = self.get_assitant()
       runs = self.thread.run(assistant=assistant)
       messages = self.thread.get_messages()
+      self.t_id=self.thread.id
       self.meta = {"run": runs, "thread": self.thread} # Used for debugging only
       return messages
     

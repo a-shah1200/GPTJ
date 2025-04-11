@@ -29,12 +29,7 @@ st.info("Go to the Nav bar and explore the options")
 if int(obj.is_gen_r(check=1))==0:
     with st.spinner("Loading, Please wait"):
         prompt="""Please read the resume and give a professional summary"""
-        query="""Analyze the given resume provided in pdf file. Then based upon that give a short professional summary for the user
-         Remember following things: 
-             1) Focus on strengths
-             2) Use professional and formal language
-             3) Maximum of 500 charaters
-             4) No need to include references for examples, things like this 【4:0†source】"""
+        query=utils.Prompts().professional_summary()
         files=["data/resume.pdf"]
         agent=ap.FileSearchAgent(dic_temp["api_key"],"Professional Summary",prompt)
         message=agent.search(query, files,New=True)
@@ -63,13 +58,7 @@ with st.expander("Daily Motivation",expanded=True):
         if int(obj.is_gen_q(check=1))==0:
             with st.spinner("Loading, Please wait"):
                 agent_q=ap.Agent(dic_temp["api_key"], "quotes","Give a motivational quote" )
-                query="""You will give a motivational quote
-                 Remember following things: 
-                     1) Target audience is jobseekers
-                     2) Be kind and compassionate
-                     3) Dont make it too long
-                     4) Try to make quote appropriate for a variety of audience. As in it should be
-                        suitable for audience of diverse backgrounds and cultures"""
+                query=utils.Prompts().quotes()
                 message_q=agent_q.search(query=query,New=True)
                 m_text_q=message_q[-1].content[-1].text.value
                 obj.is_gen_q(check=0,val=1)
