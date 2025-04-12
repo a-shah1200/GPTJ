@@ -5,7 +5,12 @@ Created on Tue Apr  8 01:42:13 2025
 @author: Asfahan
 """
 
+import instructor
+from pydantic import BaseModel
 from openai import OpenAI
+from typing import List
+
+
 import marvin
 from marvin.beta.assistants import (
     Assistant,
@@ -15,6 +20,35 @@ from marvin.beta.assistants import (
     PrintHandler,
 )
 
+class Response(BaseModel):
+  main_ideas_convo: List[str]
+  unique_ideas:List[str]
+  final_message:str
+
+  
+    
+
+class StructuredAgent():
+  def __init__(self,_API_KEY):
+    open_ai = OpenAI(api_key=_API_KEY)
+    self.client=instructor.from_openai(open_ai, mode=instructor.Mode.TOOLS_STRICT)
+  
+  def get_response(self,developer_instruction, user_instruction):
+    return self.client.chat.completions.create(
+        model="gpt-4o-mini",
+        response_model=Response,
+        messages=[
+            {
+                "role": "developer",
+                "content": f"{developer_instruction}",
+            },
+            {
+                "role": "user",
+                "content": f"{user_instruction}",
+            },
+        ],
+    )
+        
 
 
 class Agent():
@@ -82,7 +116,7 @@ class FileSearchAgent(Agent):
               self.thread = Thread(id=self.thread.id)
       else:
          self.thread=Thread(id=check)
-         print("We in check",check)
+         #print("We in check",check)
       self.thread.add(query,file_search_files=files)
       assistant = self.get_assitant()
       runs = self.thread.run(assistant=assistant)
