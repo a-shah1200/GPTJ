@@ -31,7 +31,7 @@ if prompt := st.chat_input("Let's start our inverview question practice"):
         mem=False
     else:
         mem=True
-    df = pd.read_csv('data/Software Questions.csv')  
+    df = pd.read_csv('data/Software Questions.csv', encoding='ISO-8859-1')  
     sampled_df = df.sample(n=10)
     questions=list(sampled_df["Question"])
     answers=list(sampled_df["Answer"])
