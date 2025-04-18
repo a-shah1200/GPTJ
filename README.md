@@ -6,7 +6,7 @@
 
      a) set cmd's path to GPTJ folder. Can be done cd [path where you have downloaded the rep]/GPTJ.
    
-     b) docker build -t my_app .
+     b) docker build -t my_app . (Full stop is part of the command)
    
      c) docker run -v [path of copied data folder]:/app/data -p 8501:8501 my_app
      
