@@ -128,4 +128,11 @@ class Prompts():
       
         """
     
-    
+    def AskInterviewQuestion(self,interviewQA):
+
+        return f"""
+        Given the list {interviewQA}, which each element gives a question and an anwer
+        Present one question at a time. 
+        After the user submits their answer, compare it to the reference answer provided in the list. 
+        Offer feedback based on the comparison, then proceed to the next question.
+        """
